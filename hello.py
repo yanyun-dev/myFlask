@@ -8,6 +8,7 @@ from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
 from wtforms.validators import DataRequired
 from flask_sqlalchemy import SQLAlchemy
+from flask_script import Manager, Shell
 
 basedir = os.path.abspath(os.path.dirname(__file__))
 
@@ -16,6 +17,8 @@ app.config['SECRET_KEY'] = 'hard to guess string'
 app.config['SQLALCHEMY_DATABASE_URI'] =\
 	'sqlite:///' + os.path.join(basedir, 'data.sqlite')
 app.config['SQLALCHEMY_COMMIT_ON_TEARDOWN'] = True
+
+manager = Manager(app)
 
 db = SQLAlchemy(app)
 class Role(db.Model):
@@ -44,6 +47,9 @@ class NameForm(FlaskForm):
 bootstrap = Bootstrap(app)
 moment = Moment(app)
 
+def make_shell_context():
+	return dict(app=app, db=db, User=User, Role=Role)
+manager.add_command("shell", Shell(make_context=make_shell_context))
 @app.route('/', methods=['GET', 'POST'])
 def index():
 	# name = None
@@ -83,4 +89,4 @@ def page_not_found(e):
 def internal_server_error(e):
 	return render_template('500.html'), 500
 if __name__=='__main__':
-	app.run()
+	manager.run()
