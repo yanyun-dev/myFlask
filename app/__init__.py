@@ -11,6 +11,7 @@ login_manager.session_protection = 'strong'
 login_manager.login_view = 'auth.login'
 
 
+
 bootstrap = Bootstrap()
 mail = Mail()
 moment = Moment()
@@ -26,7 +27,7 @@ def create_app(config_name):
     moment.init_app(app)
     db.init_app(app)
     login_manager.init_app(app)
-    
+
     from .auth import auth as auth_blueprint
     app.register_blueprint(auth_blueprint, url_prefix='/auth')
 
