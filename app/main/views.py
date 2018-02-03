@@ -1,10 +1,12 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for
+from flask import render_template, session, redirect, url_for, flash
+from flask_login import login_required, current_user
 
 from . import main
-from .forms import NameForm, EditProfileAdminForm
+from .forms import NameForm, EditProfileAdminForm, EditProfileForm
 from .. import db
 from ..models import User
+from ..decorators import admin_required
 
 @main.route('/main/index', methods=['GET', 'POST'])
 def index():
@@ -22,10 +24,10 @@ def user(username):
         abort(404)
     return render_template('main/user.html', user=user)
 
-@main.route('/edit-profile', methods=['GET', 'POST'])
-@login_required():
+@main.route('/main/edit-profile', methods=['GET', 'POST'])
+@login_required
 def edit_profile():
-    form = EditProfileForm()
+    form = EditProfileForm(user=user)
     if form.validate_on_submit():
         current_user.name = form.name.data
         current_user.location = form.location.data
@@ -36,9 +38,9 @@ def edit_profile():
     form.name.data = current_user.name
     form.location.data = current_user.location
     form.about_me.data = current_user.about_me
-    return render_template('edit_profile.html', form=form)
+    return render_template('main/edit_profile.html', form=form)
 
-@main.route('/edit-profile/<int:id>', methods=['GET', 'POST'])
+@main.route('/main/edit-profile/<int:id>', methods=['GET', 'POST'])
 @login_required
 @admin_required
 def edit_profile_admin(id):
@@ -62,4 +64,4 @@ def edit_profile_admin(id):
     form.name.data = user.name
     form.location.data = user.location
     form.about_me.data = user.about_me
-    return render_template('edit_profile.html', form=from, user=user)
+    return render_template('main/edit_profile.html', form=form, user=user)

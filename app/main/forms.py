@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField
-from wtforms.validators import DataRequired
+from wtforms import StringField, SubmitField, TextAreaField, BooleanField, SelectField
+from wtforms.validators import DataRequired, Length, Email, Regexp
 
 class NameForm(FlaskForm):
     name = StringField('What is your name?', validators=[DataRequired()])
@@ -12,10 +12,10 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField('About me')
     submit = SubmitField('Submit')
 
-class EditProfileAdminForm(Form):
-    email = StringField('Email', validators=[Required(), Length(1,64), Email()])
+class EditProfileAdminForm(FlaskForm):
+    email = StringField('Email', validators=[DataRequired(), Length(1,64), Email()])
     username = StringField('Username', validators=[
-        Required(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
+        DataRequired(), Length(1, 64), Regexp('^[A-Za-z][A-Za-z0-9_.]*$', 0,
                                         'Usernames must have only letters, '
                                         'numbers, dots or underscores')])
     confirmed = BooleanField('Confirmed')
