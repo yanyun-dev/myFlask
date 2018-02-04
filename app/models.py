@@ -38,7 +38,11 @@ class Role(db.Model):
 					Permission.COMMENT |
 					Permission.WRITE_ARTICLES |
 					Permission.MODERATE_COMMENTS, False),
-			'Administrator': (oxff, False)
+			'Administrator': (Permission.FOLLOW |
+					Permission.COMMENT |
+					Permission.WRITE_ARTICLES |
+					Permission.MODERATE_COMMENTS |
+					Permission.ADMINISTER, False)
 		}
 		for r in roles:
 			role = Role.query.filter_by(name=r).first()
@@ -52,6 +56,12 @@ class Role(db.Model):
 	def __repr__(self):
 		return '<Role %r>' % self.name
 
+class Post(db.Model):
+	__tablename__='posts'
+	id = db.Column(db.Integer, primary_key=True)
+	body = db.Column(db.Text)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	author_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 class User(UserMixin, db.Model):
 	__tablename__ = 'users'
@@ -67,6 +77,7 @@ class User(UserMixin, db.Model):
 	member_since = db.Column(db.DateTime(), default=datetime.utcnow)
 	last_seen = db.Column(db.DateTime(), default = datetime.utcnow)
 	avatar_hash = db.Column(db.String(32))
+	posts = db.relationship('Post', backref='author', lazy='dynamic')
 
 	def gravatar(self, size=100, default='identicon', rating='g'):
 		if request.is_secure:
@@ -125,7 +136,7 @@ class User(UserMixin, db.Model):
 		super(User, self).__init__(**kwargs)
 		if self.role is None:
 			if self.email == current_app.config['FLASKY_ADMIN']:
-				self.role = Role.query.filter_by(permissions=0xff).first()
+				self.role = Role.query.filter_by(name='Administrator').first()
 			if self.role is None:
 				self.role = Role.query.filter_by(default=True).first()
 		if self.email is not None and self.avatar_hash is None:
