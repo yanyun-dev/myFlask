@@ -58,5 +58,5 @@ type="image/x-icon">
 
 {% block scripts %}
 {{ super() }}
-{{ moment.include_moment() }}
+{{ moment.include_moment('2.10.3', '//cdn.bootcss.com/moment.js/2.10.3/moment-with-locales.min.js') }}
 {% endblock %}

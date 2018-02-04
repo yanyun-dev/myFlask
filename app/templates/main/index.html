@@ -50,3 +50,8 @@
 </div>
 {{ wtf.quick_form(form) }} -->
 {% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ pagedown.include_pagedown() }}
+{% endblock %}
