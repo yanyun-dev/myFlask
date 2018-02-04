@@ -2,8 +2,8 @@
     {% for post in posts %}
     <li class="post">
         <div class="post-thumbnail">
-            <a href="{{ url_for('.user', username=post.author.username }}">
-                <img class="img-rounded profile-thumbnail" src="post.author.gravatar(size=40) }}">
+            <a href="{{ url_for('main.user', username=post.author.username) }}">
+                <img class="img-rounded profile-thumbnail" src="{{ post.author.gravatar(size=40) }}">
             </a>
         </div>
         <div class="post-content">
@@ -20,4 +20,5 @@
             </div>
         </div>
     </li>
+    {% endfor %}
 </ul>

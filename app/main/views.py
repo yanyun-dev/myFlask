@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import render_template, session, redirect, url_for, flash
+from flask import render_template, session, redirect, url_for, flash, request, current_app
 from flask_login import login_required, current_user
 
 from . import main
@@ -23,8 +23,15 @@ def index():
                 author=current_user._get_current_object())
         db.session.add(post)
         return redirect(url_for('main.index'))
-    posts = Post.query.order_by(Post.timestamp.desc()).all()
-    return render_template('main/index.html', form=form, posts=posts, Permission=Permission)
+    # posts = Post.query.order_by(Post.timestamp.desc()).all()
+    page = request.args.get('page', 1, type=int)
+    pagination = Post.query.order_by(Post.timestamp.desc()).paginate(
+        page, per_page=current_app.config['FLASKY_POSTS_PER_PAGE'],
+        error_out = False
+    )
+    posts = pagination.items
+    return render_template('main/index.html', form=form, posts=posts, Permission=Permission,
+                            pagination=pagination)
 
 @main.route('/main/user/<username>')
 def user(username):
