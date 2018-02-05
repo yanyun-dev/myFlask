@@ -35,6 +35,7 @@ pagedown = PageDown()
 def create_app(config_name):
     app = Flask(__name__)
     app.config['FLASKY_POSTS_PER_PAGE'] = 10
+    app.config['FLASKY_FOLLOWERS_PER_PAGE'] = 10
     app.config.from_object(config[config_name])
     config[config_name].init_app(app)
 
