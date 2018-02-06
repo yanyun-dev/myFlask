@@ -23,9 +23,6 @@
                 {% endif %}
             </div>
             <div class="post-footer">
-                <a href="{{ url_for('main.post', id=post.id) }}">
-                    <span class="label label-default">Permalink</sapn>
-                </a>
                 {% if current_user == post.author %}
                 <a href="{{ url_for('main.edit', id=post.id) }}">
                     <span class="label label-primary">Edit</span>
@@ -35,6 +32,9 @@
                     <span class="label label-danger">Edit [Admin]</span>
                 </a>
                 {% endif %}
+                <a href="{{ url_for('main.post', id=post.id) }}">
+                    <span class="label label-default">Permalink</sapn>
+                </a>
             </div>
         </div>
     </li>
